@@ -1,0 +1,41 @@
+# Compiled output
+out/
+dist/
+*.vsix
+
+# Node modules
+node_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# VSCode settings (optionnel, à garder si on veut partager la config de debug)
+# .vscode/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+*.swp
+*.swo
+*~
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Environment variables
+.env
+.env.local
+
+# Temporary files
+*.tmp
+.cache/
