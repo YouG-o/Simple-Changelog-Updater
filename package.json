@@ -4,6 +4,7 @@
   "description": "Automate changelog version updates with completion",
   "version": "0.0.1",
   "publisher": "YouGo",
+  "icon": "assets/icons/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/YouG-o/Simple-Changelog-Updater.git"
@@ -54,8 +55,9 @@
     "test": "vscode-test",
     "vsce:package": "vsce package",
     "vsce:publish": "vsce publish",
-    "build": "npm run package && npm run vsce:package",
-    "install-extension": "npm run build && code --install-extension simple-changelog-updater-*.vsix"
+    "build": "npm run clean && npm run package && npm run vsce:package",
+    "install-extension": "npm run build && code --install-extension simple-changelog-updater-*.vsix",
+    "clean": "rm -rf dist out *.vsix"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
