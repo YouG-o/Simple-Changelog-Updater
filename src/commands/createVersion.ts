@@ -9,6 +9,8 @@
 
 import * as vscode from 'vscode';
 import { extractVersionFromLine, generateVersionHeader } from '../utils/versionCreator';
+import { findUnreleasedLinkLine, findPreviousVersion } from '../utils/dateVersion';
+import { extractRepoUrl } from '../utils/linkUpdater';
 
 /**
  * Command to create a changelog version entry from the current line
@@ -44,15 +46,69 @@ export async function createVersionFromLine() {
 
     console.log('[Changelog Updater] Version detected:', version);
 
-    // Generate version header
-    const versionEntry = generateVersionHeader(version);
+    // Get full document text BEFORE any modifications
+    const fullText = editor.document.getText();
 
-    // Replace the current line with the version entry
-    await editor.edit(editBuilder => {
+    // Find [Unreleased] link line BEFORE modifications
+    const unreleasedLineNum = findUnreleasedLinkLine(fullText);
+    console.log('[Changelog Updater] [Unreleased] link found at line:', unreleasedLineNum);
+
+    // Prepare all data BEFORE editing
+    const versionEntry = generateVersionHeader(version);
+    let repoUrl: string | null = null;
+    let previousVersion: string | null = null;
+    let newUnreleasedLink: string | null = null;
+    let versionLink: string | null = null;
+
+    if (unreleasedLineNum !== -1) {
+        const unreleasedLine = editor.document.lineAt(unreleasedLineNum);
+        console.log('[Changelog Updater] [Unreleased] line content:', unreleasedLine.text);
+        
+        repoUrl = extractRepoUrl(unreleasedLine.text);
+        console.log('[Changelog Updater] Extracted repo URL:', repoUrl);
+        
+        if (repoUrl) {
+            newUnreleasedLink = `[Unreleased]: ${repoUrl}/compare/v${version}...HEAD`;
+            console.log('[Changelog Updater] New [Unreleased] link:', newUnreleasedLink);
+            
+            previousVersion = findPreviousVersion(fullText, version);
+            console.log('[Changelog Updater] Previous version:', previousVersion);
+            
+            if (previousVersion) {
+                versionLink = `[${version}]: ${repoUrl}/compare/v${previousVersion}...v${version}`;
+                console.log('[Changelog Updater] New version link:', versionLink);
+            }
+        }
+    }
+
+    // Now perform all edits in a single transaction
+    const success = await editor.edit(editBuilder => {
+        // 1. Replace the version line
         editBuilder.replace(line.range, versionEntry);
+        console.log('[Changelog Updater] Replaced version line');
+
+        // 2. Update [Unreleased] link if prepared
+        if (unreleasedLineNum !== -1 && newUnreleasedLink) {
+            const unreleasedLine = editor.document.lineAt(unreleasedLineNum);
+            editBuilder.replace(unreleasedLine.range, newUnreleasedLink);
+            console.log('[Changelog Updater] Replaced [Unreleased] link');
+
+            // 3. Add new version link after [Unreleased] if prepared
+            if (versionLink) {
+                const insertPosition = new vscode.Position(unreleasedLineNum + 1, 0);
+                editBuilder.insert(insertPosition, versionLink + '\n');
+                console.log('[Changelog Updater] Inserted version link');
+            }
+        }
     });
 
-    // Move cursor to the end of the line
+    if (!success) {
+        console.error('[Changelog Updater] Edit failed');
+        vscode.window.showErrorMessage('Failed to update changelog');
+        return;
+    }
+
+    // Move cursor to the end of the version line
     const newPosition = new vscode.Position(
         position.line,
         versionEntry.length
@@ -60,7 +116,10 @@ export async function createVersionFromLine() {
     editor.selection = new vscode.Selection(newPosition, newPosition);
 
     console.log('[Changelog Updater] Version entry created successfully');
-    vscode.window.showInformationMessage(`Created version ${version}`);
-
-    // TODO: Update links in the future
+    
+    if (unreleasedLineNum !== -1 && newUnreleasedLink) {
+        vscode.window.showInformationMessage(`Created version ${version} and updated links`);
+    } else {
+        vscode.window.showInformationMessage(`Created version ${version}`);
+    }
 }

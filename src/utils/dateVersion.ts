@@ -11,17 +11,12 @@
  * Get today's date in YYYY-MM-DD format
  */
 export function getTodayDate(): string {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return new Date().toISOString().split('T')[0];
 }
 
 /**
- * Extract version number from a line like "## [2.17.2] - 2025-10-30"
- * @param line Line to parse
- * @returns Version string or null if not found
+ * Extract version number from a changelog version line
+ * Example: "## [2.17.3] - 2025-10-30" -> "2.17.3"
  */
 export function extractVersion(line: string): string | null {
     const match = line.match(/##\s*\[(\d+\.\d+\.\d+)\]/);
@@ -29,35 +24,54 @@ export function extractVersion(line: string): string | null {
 }
 
 /**
- * Find the previous version in the changelog content
- * @param text Full changelog text
- * @param currentVersion Current version to search from
- * @returns Previous version string or null if not found
+ * Find the previous version before the current one in the changelog
+ * @param text Full changelog content
+ * @param currentVersion Current version to find the previous version of
+ * @returns Previous version number or null if not found
  */
 export function findPreviousVersion(text: string, currentVersion: string): string | null {
     const lines = text.split('\n');
     let foundCurrent = false;
-    
+
     for (const line of lines) {
         const version = extractVersion(line);
-        
+        if (!version) continue;
+
         if (version === currentVersion) {
             foundCurrent = true;
             continue;
         }
-        
-        if (foundCurrent && version) {
+
+        // Return the first version found after we've seen the current version
+        if (foundCurrent) {
             return version;
         }
     }
-    
+
     return null;
 }
 
 /**
- * Validate if a string is a valid semantic version (X.Y.Z)
- * @param version Version string to validate
- * @returns true if valid, false otherwise
+ * Find the line number of the [Unreleased] link
+ * @param text Full changelog content
+ * @returns Line number (0-indexed) or -1 if not found
+ */
+export function findUnreleasedLinkLine(text: string): number {
+    const lines = text.split('\n');
+    
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].startsWith('[Unreleased]:')) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+/**
+ * Validate a version string against semantic versioning format
+ * @param version Version string to validate (e.g., "2.17.3")
+ * @returns true if valid semantic version
  */
 export function isValidVersion(version: string): boolean {
     return /^\d+\.\d+\.\d+$/.test(version);
