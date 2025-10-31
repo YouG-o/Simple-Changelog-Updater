@@ -19,13 +19,23 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "simple-changelog-updater.helloWorld",
-        "title": "Hello World"
+        "command": "simple-changelog-updater.createVersion",
+        "title": "Changelog: Create Version from Line"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "simple-changelog-updater.createVersion",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorTextFocus && resourceFilename == 'CHANGELOG.md'"
       }
     ]
   },
@@ -48,17 +58,18 @@
     "install-extension": "npm run build && code --install-extension simple-changelog-updater-*.vsix"
   },
   "devDependencies": {
-    "@types/vscode": "^1.105.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
+    "@types/vscode": "^1.105.0",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
-    "eslint": "^9.36.0",
-    "esbuild": "^0.25.10",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.9.3",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
-    "@vscode/vsce": "^3.2.1"
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.25.10",
+    "eslint": "^9.36.0",
+    "glob": "^11.0.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.9.3"
   }
 }

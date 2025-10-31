@@ -1,26 +1,38 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+/* 
+ * Copyright (C) 2025-present YouGo (https://github.com/youg-o)
+ * This program is licensed under the GNU Affero General Public License v3.0.
+ * You may redistribute it and/or modify it under the terms of the license.
+ * 
+ * Attribution must be given to the original author.
+ * This program is distributed without any warranty; see the license for details.
+ */
+
 import * as vscode from 'vscode';
+import { ChangelogCompletionProvider } from './providers/completionProvider';
+import { createVersionFromLine } from './commands/createVersion';
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
+/**
+ * Called when the extension is activated
+ */
 export function activate(context: vscode.ExtensionContext) {
+    console.log('Simple Changelog Updater is now active');
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "simple-changelog-updater" is now active!');
+    // Register completion provider for CHANGELOG.md files only
+    const provider = vscode.languages.registerCompletionItemProvider(
+        { language: 'markdown', pattern: '**/CHANGELOG.md' },
+        new ChangelogCompletionProvider()
+    );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	const disposable = vscode.commands.registerCommand('simple-changelog-updater.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from Simple Changelog Updater!');
-	});
+    // Register manual command to create version from current line
+    const createVersionCommand = vscode.commands.registerCommand(
+        'simple-changelog-updater.createVersion',
+        createVersionFromLine
+    );
 
-	context.subscriptions.push(disposable);
+    context.subscriptions.push(provider, createVersionCommand);
 }
 
-// This method is called when your extension is deactivated
+/**
+ * Called when the extension is deactivated
+ */
 export function deactivate() {}
