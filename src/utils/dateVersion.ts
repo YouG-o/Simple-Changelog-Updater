@@ -35,7 +35,9 @@ export function findPreviousVersion(text: string, currentVersion: string): strin
 
     for (const line of lines) {
         const version = extractVersion(line);
-        if (!version) continue;
+        if (!version) {
+            continue;
+        }
 
         if (version === currentVersion) {
             foundCurrent = true;

@@ -2,7 +2,7 @@
   "name": "simple-changelog-updater",
   "displayName": "Simple Changelog Updater",
   "description": "Automate changelog version updates with completion",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "YouGo",
   "icon": "assets/icons/icon.png",
   "repository": {

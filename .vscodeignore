@@ -1,0 +1,55 @@
+# Build outputs
+out/
+node_modules/
+
+# Source files (not needed in production)
+src/
+*.ts
+*.map
+tsconfig.json
+esbuild.js
+
+# Tests (excluded from build)
+src/test/
+out/test/
+.vscode-test/
+.vscode-test.mjs
+
+# Assets not needed in package
+assets/demo.gif
+
+# Development files
+.eslintrc.json
+.prettierrc
+.editorconfig
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+
+# CI/CD
+.github/
+
+# Documentation (except README and LICENSE)
+CONTRIBUTING.md
+docs/
+
+# Package manager files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.code-workspace
+
+# Misc
+*.vsix
+*.log
+npm-debug.log*
