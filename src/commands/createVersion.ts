@@ -9,8 +9,8 @@
 
 import * as vscode from 'vscode';
 import { extractVersionFromLine, generateVersionHeader } from '../utils/versionCreator';
-import { findUnreleasedLinkLine, findPreviousVersion } from '../utils/dateVersion';
-import { extractRepoUrl } from '../utils/linkUpdater';
+import { findUnreleasedLinkLine } from '../utils/dateVersion';
+import { extractRepoUrl, extractVersionFromLink } from '../utils/linkUpdater';
 
 /**
  * Command to create a changelog version entry from the current line
@@ -71,8 +71,13 @@ export async function createVersionFromLine() {
             newUnreleasedLink = `[Unreleased]: ${repoUrl}/compare/v${version}...HEAD`;
             console.log('[Changelog Updater] New [Unreleased] link:', newUnreleasedLink);
             
-            previousVersion = findPreviousVersion(fullText, version);
-            console.log('[Changelog Updater] Previous version:', previousVersion);
+            // Look for the version link right after [Unreleased]
+            const nextLineNum = unreleasedLineNum + 1;
+            if (nextLineNum < editor.document.lineCount) {
+                const nextLine = editor.document.lineAt(nextLineNum);
+                previousVersion = extractVersionFromLink(nextLine.text);
+                console.log('[Changelog Updater] Previous version from link below:', previousVersion);
+            }
             
             if (previousVersion) {
                 versionLink = `[${version}]: ${repoUrl}/compare/v${previousVersion}...v${version}`;

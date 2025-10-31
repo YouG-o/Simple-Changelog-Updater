@@ -8,7 +8,7 @@
  */
 
 import * as assert from 'assert';
-import { extractRepoUrl } from '../../utils/linkUpdater';
+import { extractRepoUrl, extractVersionFromLink } from '../../utils/linkUpdater';
 
 suite('linkUpdater Utils Test Suite', () => {
     
@@ -31,6 +31,31 @@ suite('linkUpdater Utils Test Suite', () => {
             assert.strictEqual(extractRepoUrl('[Unreleased]: invalid'), null);
             assert.strictEqual(extractRepoUrl('Not a link'), null);
             assert.strictEqual(extractRepoUrl(''), null);
+        });
+    });
+
+    suite('extractVersionFromLink', () => {
+        test('Should extract version from version link', () => {
+            const link = '[2.17.2]: https://github.com/user/repo/compare/v2.17.1...v2.17.2';
+            const version = extractVersionFromLink(link);
+            assert.strictEqual(version, '2.17.2');
+        });
+
+        test('Should handle different version formats', () => {
+            assert.strictEqual(extractVersionFromLink('[1.0.0]: https://github.com/user/repo/compare/v0.9.0...v1.0.0'), '1.0.0');
+            assert.strictEqual(extractVersionFromLink('[10.20.30]: https://example.com/compare/v10.20.29...v10.20.30'), '10.20.30');
+        });
+
+        test('Should return null for invalid format', () => {
+            assert.strictEqual(extractVersionFromLink('[Unreleased]: https://github.com/user/repo/compare/v1.0.0...HEAD'), null);
+            assert.strictEqual(extractVersionFromLink('Not a link'), null);
+            assert.strictEqual(extractVersionFromLink(''), null);
+            assert.strictEqual(extractVersionFromLink('[v2.0.0]: https://example.com'), null); // "v" prefix not allowed
+        });
+
+        test('Should extract version at start of line only', () => {
+            assert.strictEqual(extractVersionFromLink('[1.2.3]: https://github.com/user/repo/compare/v1.2.2...v1.2.3'), '1.2.3');
+            assert.strictEqual(extractVersionFromLink('  [1.2.3]: https://example.com'), null); // Indented
         });
     });
 });

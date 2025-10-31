@@ -16,3 +16,13 @@ export function extractRepoUrl(unreleasedLink: string): string | null {
     const match = unreleasedLink.match(/\[Unreleased\]:\s*(https?:\/\/[^\/]+\/[^\/]+\/[^\/]+)/);
     return match ? match[1] : null;
 }
+
+/**
+ * Extract version number from a version comparison link
+ * Example: "[2.17.2]: https://github.com/user/repo/compare/v2.17.1...v2.17.2"
+ * Returns: "2.17.2"
+ */
+export function extractVersionFromLink(linkLine: string): string | null {
+    const match = linkLine.match(/^\[(\d+\.\d+\.\d+)\]:/);
+    return match ? match[1] : null;
+}
