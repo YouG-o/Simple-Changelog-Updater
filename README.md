@@ -1,10 +1,18 @@
 <div align="center">
 
+[![Release Version](https://img.shields.io/github/v/release/YouG-o/Simple-Changelog-Updater?style=flat&logo=github&color=2ea44f)](https://github.com/YouG-o/Simple-Changelog-Updater/releases/latest)
+[![Github Stargazers](https://img.shields.io/github/stars/YouG-o/Simple-Changelog-Updater?style=flat&logo=github&color=f9d71c)](https://github.com/YouG-o/Simple-Changelog-Updater/stargazers)
+[![LICENSE](https://img.shields.io/github/license/YouG-o/Simple-Changelog-Updater?style=flat&logo=gnu&logoColor=white&color=3da639)](LICENSE)
+
 ![Extension icon](https://raw.githubusercontent.com/YouG-o/Simple-Changelog-Updater/main/assets/icons/icon.png)
 
 ###
 
 # Simple Changelog Updater
+
+**Automate CHANGELOG.md version entries with keyboard shortcuts and automatic link management.**
+
+[![Install from VS Marketplace](https://img.shields.io/badge/Install-VS%20Marketplace-0078d7?style=for-the-badge&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=YouGo.simple-changelog-updater)
 
 <br>
 
@@ -18,6 +26,12 @@
 - 🔗 Automatically updates changelog links ([Unreleased] and version comparison links)
 - 📝 Works only in CHANGELOG.md files
 
+## Demo
+
+![Demo](https://raw.githubusercontent.com/YouG-o/Simple-Changelog-Updater/main/assets/demo.gif)
+
+*Press `Cmd/Ctrl+Shift+V` on a version line to automatically create the version entry and update links*
+
 ## Usage
 
 1. Open your `CHANGELOG.md` file
@@ -27,12 +41,6 @@
    - Replace the line with: `## [2.17.3] - 2025-10-31`
    - Update `[Unreleased]` link to compare against the new version
    - Add a new version comparison link (e.g., `[2.17.3]: .../compare/v2.17.2...v2.17.3`)
-
-## Demo
-
-![Demo](https://raw.githubusercontent.com/YouG-o/Simple-Changelog-Updater/main/assets/demo.gif)
-
-*Press `Cmd+Shift+V` on a version line to automatically create the version entry and update links*
 
 ### Customizing the Keyboard Shortcut
 
